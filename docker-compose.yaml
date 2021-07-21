@@ -45,7 +45,7 @@ services:
             - KONG_PG_HOST=${KONG_PG_HOST:-kong-database}
             - KONG_PG_DATABASE=${POSTGRESQL_DATABASE:-kong}
             - KONG_PG_USER=${POSTGRESQL_USERNAME:-kong}
-            - KONG_PG_PASSWORD=${POSTGRESQL_DATABASE:-kong}
+            - KONG_PG_PASSWORD=${POSTGRESQL_PASSWORD:-kong}
         restart: on-failure
         deploy:
             restart_policy:
@@ -56,14 +56,14 @@ services:
             - kong-database
         image: kong:2.5
         container_name: kong-api-gateway
-        user: root
+        user: $USER
         environment:
             - TZ=${TZ:-Asia/Bangkok}
             - KONG_DATABASE=postgres
             - KONG_PG_HOST=${KONG_PG_HOST:-kong-database}
             - KONG_PG_DATABASE=${POSTGRESQL_DATABASE:-kong}
             - KONG_PG_USER=${POSTGRESQL_USERNAME:-kong}
-            - KONG_PG_PASSWORD=${POSTGRESQL_DATABASE:-kong}
+            - KONG_PG_PASSWORD=${POSTGRESQL_PASSWORD:-kong}
             - KONG_ADMIN_LISTEN=${KONG_ADMIN_LISTEN:-0.0.0.0:8001}
             - KONG_PROXY_LISTEN=${KONG_PROXY_LISTEN:-0.0.0.0:8000}
             - KONG_PROXY_ERROR_LOG=/dev/stderr
@@ -79,6 +79,28 @@ services:
             interval: 5s
             timeout: 2s
             retries: 15
+    konga:
+        image: pantsel/konga
+        container_name: konga
+        environment:
+            - NODE_ENV=development
+            - DB_ADAPTER=${DB_ADAPTER:-postgres}
+            - DB_HOST=${KONG_PG_HOST:-kong-database}
+            - DB_DATABASE=${POSTGRESQL_DATABASE:-konga}
+            - DB_PORT=5432
+            - DB_USER=${POSTGRESQL_USERNAME:-kong}
+            - DB_PASSWORD=${POSTGRESQL_PASSWORD:-kong}
+            - DB_PG_SCHEMA=public
+        ports:
+            - 1337:1337
+        volumes:
+            - ./api-gateway/konga_data:/app/kongadata
+        restart: always
+        healthcheck:
+            test: ["CMD-SHELL", "wget --no-verbose --spider  http://localhost:1337 || exit 1"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
 
 
