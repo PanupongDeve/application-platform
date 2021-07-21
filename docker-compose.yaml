@@ -1,0 +1,84 @@
+version: '3'
+services: 
+    kong-database:
+        image: bitnami/postgresql:latest
+        container_name: kong-database
+        user: $USER
+        environment:
+            - POSTGRESQL_USERNAME=${POSTGRESQL_USERNAME-kong}
+            - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD:-kong}
+            - POSTGRESQL_DATABASE=${POSTGRESQL_DATABASE:-kong}
+        volumes:
+            - ./api-gateway/pg_data:/bitnami/postgresql
+        restart: always
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+    pgadmin:
+        container_name: pgadmin_container
+        image: dpage/pgadmin4
+        # user: $USER
+        environment:
+            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+            PGADMIN_CONFIG_SERVER_MODE: 'False'
+        volumes:
+            - ./api-gateway/pgadmin:/var/lib/pgadmin
+        ports:
+            - "${PGADMIN_PORT:-5050}:80"
+        restart: always
+        healthcheck:
+            test: ["CMD-SHELL", "wget --no-verbose --spider  http://localhost/browser/ || exit 1"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+    kong-migrations:
+        depends_on:
+            - kong-database
+        image: kong:2.5
+        command: kong migrations bootstrap
+        environment:
+            - KONG_PG_HOST=${KONG_PG_HOST:-kong-database}
+            - KONG_PG_DATABASE=${POSTGRESQL_DATABASE:-kong}
+            - KONG_PG_USER=${POSTGRESQL_USERNAME:-kong}
+            - KONG_PG_PASSWORD=${POSTGRESQL_DATABASE:-kong}
+        restart: on-failure
+        deploy:
+            restart_policy:
+                condition: on-failure
+
+    kong-api-gateway:
+        depends_on:
+            - kong-database
+        image: kong:2.5
+        container_name: kong-api-gateway
+        user: root
+        environment:
+            - TZ=${TZ:-Asia/Bangkok}
+            - KONG_DATABASE=postgres
+            - KONG_PG_HOST=${KONG_PG_HOST:-kong-database}
+            - KONG_PG_DATABASE=${POSTGRESQL_DATABASE:-kong}
+            - KONG_PG_USER=${POSTGRESQL_USERNAME:-kong}
+            - KONG_PG_PASSWORD=${POSTGRESQL_DATABASE:-kong}
+            - KONG_ADMIN_LISTEN=${KONG_ADMIN_LISTEN:-0.0.0.0:8001}
+            - KONG_PROXY_LISTEN=${KONG_PROXY_LISTEN:-0.0.0.0:8000}
+            - KONG_PROXY_ERROR_LOG=/dev/stderr
+            - KONG_ADMIN_ERROR_LOG=/dev/stderr
+            - KONG_TRUSTED_IPS=0.0.0.0/0,::/0
+            - KONG_REAL_IP_RECURSIVE=on
+        ports:
+            - 80:8000
+            - 8001:8001
+        restart: always
+        healthcheck:
+            test: ["CMD", "kong", "health"]
+            interval: 5s
+            timeout: 2s
+            retries: 15
+
+
+
