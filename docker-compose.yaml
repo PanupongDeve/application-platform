@@ -1,5 +1,8 @@
 version: '3'
-services: 
+services:
+    debugger:
+        container_name: debugger
+        image: panupongdeve/debugger:latest
     kong-database:
         image: bitnami/postgresql:latest
         container_name: kong-database
@@ -70,9 +73,46 @@ services:
             - KONG_ADMIN_ERROR_LOG=/dev/stderr
             - KONG_TRUSTED_IPS=0.0.0.0/0,::/0
             - KONG_REAL_IP_RECURSIVE=on
+            - KONG_HEADERS=off
+            - KONG_ROLE=control_plane
+            - KONG_CLUSTER_CERT=/etc/kong/cert/cluster.crt
+            - KONG_CLUSTER_CERT_KEY=/etc/kong/cert/cluster.key
+        volumes:
+            - ./api-gateway/kong/cert:/etc/kong/cert
+        ports:
+            - 8001:8001
+        expose: 
+            - 8005
+        restart: always
+        healthcheck:
+            test: ["CMD", "kong", "health"]
+            interval: 5s
+            timeout: 2s
+            retries: 15
+
+    kong-api-data-plane:
+        depends_on:
+            - kong-api-gateway
+        image: kong:2.5
+        container_name: kong-api-data-plane
+        user: $USER
+        environment:
+            - TZ=${TZ:-Asia/Bangkok}
+            - KONG_DATABASE=off
+            - KONG_PROXY_LISTEN=${KONG_PROXY_LISTEN:-0.0.0.0:8000}
+            - KONG_PROXY_ERROR_LOG=/dev/stderr
+            - KONG_ADMIN_ERROR_LOG=/dev/stderr
+            - KONG_TRUSTED_IPS=0.0.0.0/0,::/0
+            - KONG_REAL_IP_RECURSIVE=on
+            - KONG_HEADERS=off
+            - KONG_ROLE=data_plane
+            - KONG_CLUSTER_CONTROL_PLANE=kong-api-gateway:8005
+            - KONG_CLUSTER_CERT=/etc/kong/cert/cluster.crt
+            - KONG_CLUSTER_CERT_KEY=/etc/kong/cert/cluster.key
+        volumes:
+            - ./api-gateway/kong/cert:/etc/kong/cert
         ports:
             - 80:8000
-            - 8001:8001
         restart: always
         healthcheck:
             test: ["CMD", "kong", "health"]
