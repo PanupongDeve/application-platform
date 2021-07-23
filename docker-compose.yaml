@@ -111,6 +111,7 @@ services:
             - KONG_CLUSTER_CERT_KEY=/etc/kong/cert/cluster.key
         volumes:
             - ./api-gateway/kong/cert:/etc/kong/cert
+            - ./api-gateway/kong/logs:/etc/kong/logs
         ports:
             - 80:8000
         restart: always
