@@ -1,0 +1,5 @@
+for bitnami container use user pid 1001
+before mout volumn
+- sudo groupadd -g 1001 bitnami
+- sudo usermod  -a -G bitnami username
+- sudo chown -R 1001:1001 <bitnami-container-directory>

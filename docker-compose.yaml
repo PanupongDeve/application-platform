@@ -6,7 +6,6 @@ services:
     kong-database:
         image: bitnami/postgresql:latest
         container_name: kong-database
-        user: $USER
         environment:
             - POSTGRESQL_USERNAME=${POSTGRESQL_USERNAME:-kong}
             - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD:-kong}
@@ -23,7 +22,6 @@ services:
     pgadmin:
         container_name: pgadmin_container
         image: dpage/pgadmin4
-        # user: $USER
         environment:
             PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
             PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
@@ -56,7 +54,6 @@ services:
             - kong-database
         image: kong:2.5
         container_name: kong-api-gateway
-        user: $USER
         environment:
             - TZ=${TZ:-Asia/Bangkok}
             - KONG_DATABASE=postgres
@@ -187,7 +184,6 @@ services:
     grafana-database:
         image: bitnami/postgresql:latest
         container_name: grafana-database
-        # user: $USER
         environment:
             - POSTGRESQL_USERNAME=${POSTGRESQL_USERNAME:-grafana}
             - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD:-grafana}
@@ -212,4 +208,37 @@ services:
             - ./monitoring/grafana/grafana_config:/etc/grafana
         ports:
             - 9300:3000
+
+    zookeeper1:
+        image: bitnami/zookeeper
+        container_name: zookeeper1
+        restart: always
+        environment:
+            - ALLOW_ANONYMOUS_LOGIN=${ALLOW_ANONYMOUS_LOGIN:-yes}
+            - ZOO_SERVER_ID=1
+            - ZOO_SERVERS=0.0.0.0:2888:3888,zookeeper2:2888:3888,zookeeper3:2888:3888
+        volumes:
+            - ./meesage-broker/zookeper/zookeeper_data1:/bitnami/zookeeper
+
+    zookeeper2:
+        image: bitnami/zookeeper
+        container_name: zookeeper2
+        restart: always
+        environment:
+            - ALLOW_ANONYMOUS_LOGIN=${ALLOW_ANONYMOUS_LOGIN:-yes}
+            - ZOO_SERVER_ID=2
+            - ZOO_SERVERS=zookeeper1:2888:3888,0.0.0.0:2888:3888,zookeeper3:2888:3888
+        volumes:
+            - ./meesage-broker/zookeper/zookeeper_data2:/bitnami/zookeeper
+
+    zookeeper3:
+        image: bitnami/zookeeper
+        container_name: zookeeper3
+        restart: always
+        environment:
+            - ALLOW_ANONYMOUS_LOGIN=${ALLOW_ANONYMOUS_LOGIN:-yes}
+            - ZOO_SERVER_ID=3
+            - ZOO_SERVERS=zookeeper1:2888:3888,zookeeper2:2888:3888,0.0.0.0:2888:3888,
+        volumes:
+            - ./meesage-broker/zookeper/zookeeper_data3:/bitnami/zookeeper
 
