@@ -8,7 +8,7 @@ services:
         container_name: kong-database
         user: $USER
         environment:
-            - POSTGRESQL_USERNAME=${POSTGRESQL_USERNAME-kong}
+            - POSTGRESQL_USERNAME=${POSTGRESQL_USERNAME:-kong}
             - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD:-kong}
             - POSTGRESQL_DATABASE=${POSTGRESQL_DATABASE:-kong}
         volumes:
@@ -50,9 +50,6 @@ services:
             - KONG_PG_USER=${POSTGRESQL_USERNAME:-kong}
             - KONG_PG_PASSWORD=${POSTGRESQL_PASSWORD:-kong}
         restart: on-failure
-        deploy:
-            restart_policy:
-                condition: on-failure
 
     kong-api-gateway:
         depends_on:
@@ -143,5 +140,76 @@ services:
             timeout: 5s
             retries: 5
 
+    prometheus:
+        image: prom/prometheus
+        container_name: prometheus
+        ports:
+            - 9090:9090
+        volumes:
+            - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+        restart: always
+        healthcheck:
+            test: ["CMD-SHELL", "wget --no-verbose --spider  http://localhost:9090 || exit 1"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
+    cadvisor:
+        image: gcr.io/cadvisor/cadvisor
+        container_name: cadvisor
+        privileged: true
+        restart: always
+        healthcheck:
+            test: ["CMD-SHELL", "wget --no-verbose --spider  http://localhost:8080 || exit 1"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        ports:
+            - 9080:8080
+        volumes:
+            - /:/rootfs:ro
+            - /var/run:/var/run:ro
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
+            - /dev/disk/:/dev/disk:ro
+
+    node-exporter:
+        image: prom/node-exporter
+        container_name: node-exporter
+        privileged: true
+        restart: always
+        healthcheck:
+            test: ["CMD-SHELL", "wget --no-verbose --spider  http://localhost:9100 || exit 1"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+    grafana-database:
+        image: bitnami/postgresql:latest
+        container_name: grafana-database
+        # user: $USER
+        environment:
+            - POSTGRESQL_USERNAME=${POSTGRESQL_USERNAME:-grafana}
+            - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD:-grafana}
+            - POSTGRESQL_DATABASE=${POSTGRESQL_DATABASE:-grafana}
+        volumes:
+            - ./monitoring/grafana/pg_data:/bitnami/postgresql
+        restart: always
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+    grafana:
+        image: grafana/grafana
+        container_name: grafana
+        depends_on:
+            - grafana-database
+        restart: always
+        volumes:
+            - ./monitoring/grafana/grafana_storage:/var/lib/grafana
+            - ./monitoring/grafana/grafana_config:/etc/grafana
+        ports:
+            - 9300:3000
 

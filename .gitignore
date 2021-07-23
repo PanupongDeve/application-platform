@@ -2,3 +2,4 @@ pgadmin
 pg_data
 konga_data
 *.log
+grafana_storage
