@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kong-data-replica-config
+  namespace: kong-data
+  labels:
+    app: kong-pgdata
+data:
+  POSTGRESQL_REPLICATION_MODE: "slave"
+  POSTGRESQL_MASTER_HOST: "kong-pg-data-svc.kong-data.svc.cluster.local"
+  POSTGRESQL_MASTER_PORT_NUMBER: "5432"
+  POSTGRESQL_REPLICATION_USER: "kong-repl"
+  POSTGRESQL_REPLICATION_PASSWORD: "kong-repl"
+  POSTGRESQL_PASSWORD: "kong"
