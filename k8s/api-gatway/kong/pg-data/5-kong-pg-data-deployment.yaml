@@ -4,7 +4,7 @@ metadata:
   name: kong-pg-data
   namespace: kong-data
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: kong-pg-data
