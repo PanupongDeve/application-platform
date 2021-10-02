@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kong-pg-admin
+  namespace: kong-data
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kong-pg-admin
+  template:
+    metadata:
+      labels:
+        app: kong-pg-admin
+    spec:
+      containers:
+      - name: kong-pg-admin
+        image: dpage/pgadmin4
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: kong-pg-admin-storage
+          mountPath: /var/lib/pgadmin
+        env:
+        - name: PGADMIN_DEFAULT_EMAIL
+          valueFrom:
+            configMapKeyRef:
+              name: kong-pg-admin-config
+              key: PGADMIN_DEFAULT_EMAIL
+        - name: PGADMIN_DEFAULT_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: kong-pg-admin-config
+              key: PGADMIN_DEFAULT_PASSWORD
+        - name: PPGADMIN_CONFIG_SERVER_MODE
+          valueFrom:
+            configMapKeyRef:
+              name: kong-pg-admin-config
+              key: PGADMIN_CONFIG_SERVER_MODE
+      volumes:
+      - name: kong-pg-admin-storage
+        persistentVolumeClaim:
+          claimName: kong-pg-admin-pvc

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kong-pg-admin-config
+  namespace: kong-data
+  labels:
+    app: kong-pgdata
+data:
+  PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+  PGADMIN_DEFAULT_PASSWORD: admin
+  PGADMIN_CONFIG_SERVER_MODE: 'False'
