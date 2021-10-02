@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kong-pg-data
+  namespace: kong-data
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: kong-pg-data
+  template:
+    metadata:
+      labels:
+        app: kong-pg-data
+    spec:
+      containers:
+      - name: kong-pg-data
+        image: bitnami/postgresql:latest
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: kong-pv-storage
+          mountPath: /bitnami/postgresql
+        env:
+        - name: POSTGRESQL_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: kong-data-config
+              key: POSTGRESQL_USERNAME
+        - name: POSTGRESQL_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: kong-data-config
+              key: POSTGRESQL_PASSWORD
+        - name: POSTGRESQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: kong-data-config
+              key: POSTGRESQL_DATABASE
+      volumes:
+      - name: kong-pv-storage
+        persistentVolumeClaim:
+          claimName: kong-pvc
