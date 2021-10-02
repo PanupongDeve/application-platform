@@ -6,6 +6,6 @@ metadata:
   labels:
     app: kong-pgdata
 data:
-  POSTGRESQL_USERNAME: kong
-  POSTGRESQL_PASSWORD: kong
-  POSTGRESQL_DATABASE: kong
+  POSTGRESQL_USERNAME: "kong"
+  POSTGRESQL_PASSWORD: "kong"
+  POSTGRESQL_DATABASE: "kong"
