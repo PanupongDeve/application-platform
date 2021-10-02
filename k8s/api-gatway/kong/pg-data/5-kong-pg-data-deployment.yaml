@@ -22,6 +22,11 @@ spec:
         - name: kong-pv-storage
           mountPath: /bitnami/postgresql
         env:
+        - name: POSTGRESQL_REPLICATION_MODE
+          valueFrom:
+            configMapKeyRef:
+              name: kong-data-config
+              key: POSTGRESQL_REPLICATION_MODE
         - name: POSTGRESQL_USERNAME
           valueFrom:
             configMapKeyRef:
@@ -37,6 +42,16 @@ spec:
             configMapKeyRef:
               name: kong-data-config
               key: POSTGRESQL_DATABASE
+        - name: POSTGRESQL_REPLICATION_USER
+          valueFrom:
+            configMapKeyRef:
+              name: kong-data-config
+              key: POSTGRESQL_REPLICATION_USER
+        - name: POSTGRESQL_REPLICATION_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: kong-data-config
+              key: POSTGRESQL_REPLICATION_PASSWORD
       volumes:
       - name: kong-pv-storage
         persistentVolumeClaim:
