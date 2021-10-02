@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kong-pg-data-svc
+  namespace: kong-data
+spec:
+  type: ClusterIP
+  selector:
+    app: kong-pg-data
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+
+# DNS kong-pg-data-svc.kong-data.svc.cluster.local

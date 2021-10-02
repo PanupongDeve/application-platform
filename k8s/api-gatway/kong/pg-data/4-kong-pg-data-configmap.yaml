@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kong-data-config
+  namespace: kong-data
+  labels:
+    app: kong-pgdata
+data:
+  POSTGRESQL_USERNAME: kong
+  POSTGRESQL_PASSWORD: kong
+  POSTGRESQL_DATABASE: kong
