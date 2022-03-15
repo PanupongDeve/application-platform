@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pg-admin
+  namespace: pg-admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pg-admin
+  template:
+    metadata:
+      labels:
+        app: pg-admin
+    spec:
+      containers:
+      - name: pg-admin
+        image: dpage/pgadmin4
+        ports:
+        - containerPort: 80
+          name: http-pg-admin
+          protocol: TCP
+        volumeMounts:
+        - name: pg-admin-storage
+          mountPath: /var/lib/pgadmin
+        env:
+        - name: PGADMIN_DEFAULT_EMAIL
+          valueFrom:
+            configMapKeyRef:
+              name: pg-admin-config
+              key: PGADMIN_DEFAULT_EMAIL
+        - name: PGADMIN_DEFAULT_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: pg-admin-config
+              key: PGADMIN_DEFAULT_PASSWORD
+        - name: PPGADMIN_CONFIG_SERVER_MODE
+          valueFrom:
+            configMapKeyRef:
+              name: pg-admin-config
+              key: PGADMIN_CONFIG_SERVER_MODE
+      volumes:
+      - name: pg-admin-storage
+        persistentVolumeClaim:
+          claimName: pg-admin-pvc
