@@ -1,1 +1,0 @@
-argocd app delete pg-admin-4

@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kong-pg-database
+  namespace: argocd
+spec:
+  destination:
+    namespace: kong-dev
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: ./k8s/development/platform/api-gateway/kong/1-kong-pg-database/
+    repoURL: https://github.com/PanupongDeve/application-platform
+    targetRevision: HEAD
+
+--- 
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kong-pg-database-migration
+  namespace: argocd
+spec:
+  destination:
+    namespace: kong-dev
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: ./k8s/development/platform/api-gateway/kong/2-kong-migration/
+    repoURL: https://github.com/PanupongDeve/application-platform
+    targetRevision: HEAD

@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pg-admin-4
+  namespace: argocd
+spec:
+  destination:
+    namespace: pg-admin-development
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: ./k8s/development/platform/monitoring/pg-admin/pg-admin-application/
+    repoURL: https://github.com/PanupongDeve/application-platform
+    targetRevision: HEAD
