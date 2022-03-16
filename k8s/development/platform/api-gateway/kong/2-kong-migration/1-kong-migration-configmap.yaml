@@ -5,7 +5,7 @@ metadata:
   labels:
     app: kong-api-gateway
 data:
-  KONG_PG_HOST: kong-pg-data-svc.kong-data.svc.cluster.local
+  KONG_PG_HOST: kong-pg-data-svc.kong-dev.svc.cluster.local
   KONG_PG_DATABASE: kong
   KONG_PG_USER: kong
   KONG_PG_PASSWORD: kong

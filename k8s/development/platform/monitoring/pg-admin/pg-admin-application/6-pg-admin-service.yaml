@@ -14,4 +14,4 @@ spec:
       nodePort: 32080
 
 
-# DNS kong-pg-admin-svc.kong-data.svc.cluster.local
+# DNS kong-pg-admin-svc.<namespace>.svc.cluster.local
