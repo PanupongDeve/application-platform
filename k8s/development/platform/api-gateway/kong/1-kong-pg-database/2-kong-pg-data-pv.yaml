@@ -2,7 +2,6 @@ kind: PersistentVolume
 apiVersion: v1
 metadata:
   name: kong-pv
-  namespace: kong-data
 spec:
   storageClassName: localdisk
   persistentVolumeReclaimPolicy: Recycle

@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kong-pg-data-replica
-  namespace: kong-data
 spec:
   replicas: 2
   selector:
