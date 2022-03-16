@@ -11,4 +11,4 @@ spec:
       port: 5432
       targetPort: 5432
 
-# DNS kong-pg-data-replica-svc.kong-data.svc.cluster.local
+# DNS kong-pg-data-replica-svc.kong-dev.svc.cluster.local
