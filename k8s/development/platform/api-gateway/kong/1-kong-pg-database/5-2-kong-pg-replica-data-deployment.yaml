@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: kong-pg-data-replica
-        image: postgres:9.6
+        image: bitnami/postgresql:9.6
         ports:
         - containerPort: 5432
         env:
