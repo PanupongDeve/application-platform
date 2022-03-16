@@ -7,8 +7,8 @@ spec:
     spec:
       containers:
       - name: kong-migration
-        image: kong:2.7
-        command: ["kong",  "migrations", "up"]
+        image: kong:latest
+        command: ["kong",  "migrations", "bootstrap", "-v"]
         env:
         - name: KONG_PG_HOST
           valueFrom:
