@@ -7,13 +7,10 @@ spec:
     spec:
       containers:
       - name: kong-migration
-        image: kong:latest
+        image: kong:2.8.0-alpine
         # command: ["kong",  "migrations", "bootstrap", "-v"]
         command: ["/bin/sh","-c"]
-        args: ["sudo su
-                && apk add --no-cache curl git gcc musl-dev 
-                && luarocks install luaossl OPENSSL_DIR=/usr/local/kong CRYPTO_DIR=/usr/local/kong 
-                && kong  migrations bootstrap -v"]
+        args: ["kong migrations bootstrap"]
         env:
         - name: KONG_PG_HOST
           valueFrom:
