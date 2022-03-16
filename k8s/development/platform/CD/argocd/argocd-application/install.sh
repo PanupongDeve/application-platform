@@ -1,5 +1,5 @@
 microk8s.kubectl apply -n argocd -f install.yaml 
-
+# microk8s.kubectl delete -n argocd -f install.yaml
 # UI export port 32090
 
 # username: admin
