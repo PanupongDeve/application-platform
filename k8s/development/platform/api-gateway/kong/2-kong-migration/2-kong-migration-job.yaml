@@ -9,6 +9,7 @@ spec:
       - name: kong-migration
         image: kong:latest
         # command: ["kong",  "migrations", "bootstrap", "-v"]
+        user: root
         command: ["/bin/sh","-c"]
         args: ["apk add --no-cache curl git gcc musl-dev 
                 && luarocks install luaossl OPENSSL_DIR=/usr/local/kong CRYPTO_DIR=/usr/local/kong 
