@@ -10,7 +10,7 @@ spec:
   destination:
     namespace: demo-dev
     server: https://kubernetes.default.svc
-  project: Demo
+  project: demo
   source:
     path: k8s/development/platform/database/mysql/mysql-helm-output/
     repoURL: https://github.com/PanupongDeve/application-platform
