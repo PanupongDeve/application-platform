@@ -1,16 +1,17 @@
+# helm template mysql-helm/ > mysql-helm-output/application.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: mysql-dev
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
+  destination:
+    namespace: demo-dev
+    server: https://kubernetes.default.svc
   project: Demo
   source:
-    chart: mysql-chart-dev
+    path: k8s/development/platform/database/mysql/mysql-helm-output/
     repoURL: https://github.com/PanupongDeve/application-platform
     targetRevision: HEAD
-    helm:
-      releaseName: demo-mysql
-  destination:
-    server: "https://kubernetes.default.svc"
-    namespace: demo-dev
