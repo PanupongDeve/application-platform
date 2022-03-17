@@ -18,6 +18,10 @@ spec:
       containers:
         - name: mysql
           image: bitnami/mysql:5.7
+          ports:
+          - containerPort: 3306
+            name: tcp-mysql
+            protocol: TCP
           volumeMounts:
             - mountPath: /bitnami/mysql/data
               name: mysql-pv
