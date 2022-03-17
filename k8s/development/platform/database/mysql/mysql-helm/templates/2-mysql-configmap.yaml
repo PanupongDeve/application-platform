@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+  namespace: {{ .Values.project }}-{{ .Values.environment }}
+  labels:
+    app: mysql
+data:
+  MYSQL_ROOT_PASSWORD: {{ .Values.config.root_password }}
+  MYSQL_USER: {{ .Values.config.username }}
+  MYSQL_PASSWORD: {{ .Values.config.password }}

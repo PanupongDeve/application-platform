@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: mysql-serivce
+  name: grafana-serivce
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
