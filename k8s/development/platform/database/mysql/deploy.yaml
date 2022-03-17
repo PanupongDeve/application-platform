@@ -11,6 +11,6 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: ./k8s/development/platform/database/mysql/mysql-application/
+    path: k8s/development/platform/database/mysql/mysql-application/
     repoURL: https://github.com/PanupongDeve/application-platform
     targetRevision: HEAD
