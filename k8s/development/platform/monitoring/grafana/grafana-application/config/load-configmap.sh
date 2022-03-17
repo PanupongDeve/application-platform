@@ -1,1 +1,0 @@
-microk8s.kubectl create configmap grafana-config -n grafana --from-file=grafana.ini

@@ -4,9 +4,9 @@ metadata:
   labels:
     app: grafana
   name: grafana
-  namespace: grafana
+  namespace: grafana-dev
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: grafana
