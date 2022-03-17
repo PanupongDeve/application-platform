@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: {{ .Values.project }}-{{ .Values.environment }}
+spec:
+  ports:
+    - port: 3306
+      protocol: TCP
+      targetPort: tcp-mysql
+      nodePort: {{ .Values.networking.nodePort }}
+  selector:
+    app: mysql
+  sessionAffinity: None
+  type: {{ .Values.networking.type }}
