@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: pg-admin-4
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
     namespace: pg-admin-development
