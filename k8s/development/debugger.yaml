@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: debugger
+
+spec:
+  containers:
+  - name: debugger
+    image: panupongdeve/debugger:latest

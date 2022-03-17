@@ -9750,7 +9750,7 @@ metadata:
     app.kubernetes.io/part-of: argocd
   name: argocd-server
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
   - name: http
     port: 80
@@ -9760,7 +9760,7 @@ spec:
     port: 443
     protocol: TCP
     targetPort: 8080
-    nodePort: 32090
+ 
   selector:
     app.kubernetes.io/name: argocd-server
 ---
