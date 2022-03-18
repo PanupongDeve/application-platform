@@ -55,12 +55,12 @@ if [ "$pg4" == "1" ];then
 echo "------------------ Create PG Admin 4 Argocd file ----------------------------------"
 echo "cleaning files"
 
-echo "building database"
+echo "building pg-admin"
 mkdir -p ./monitoring/pg-admin/pg-admin-$project-$env || true
 helm template mysql -f ./monitoring/pg-admin/pg-admin-template/values-$project-$env.yaml  ./monitoring/pg-admin/pg-admin-template/ > ./monitoring/pg-admin/pg-admin-$project-$env/application.yaml
 
 
-cat <<EOF > ./deploy/$project-$env/$project-database-deploy.yaml
+cat <<EOF > ./deploy/$project-$env/$project-pg-admin-deploy.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
