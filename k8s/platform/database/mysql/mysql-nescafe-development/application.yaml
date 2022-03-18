@@ -3,14 +3,14 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: demo-dev
+  name: nescafe-development
 ---
 # Source: mysql-chart-dev/templates/2-mysql-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mysql-config
-  namespace: demo-dev
+  namespace: nescafe-development
   labels:
     app: mysql
 data:
@@ -23,7 +23,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mysql-pvc
-  namespace: demo-dev
+  namespace: nescafe-development
 spec:
   accessModes:
     - ReadWriteOnce
@@ -36,7 +36,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mysql
-  namespace: demo-dev
+  namespace: nescafe-development
 spec:
   ports:
     - port: 3306
@@ -55,7 +55,7 @@ metadata:
   labels:
     app: mysql
   name: mysql
-  namespace: demo-dev
+  namespace: nescafe-development
 spec:
   replicas: 1
   selector:

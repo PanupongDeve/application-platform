@@ -1,5 +1,5 @@
-project: demo
-environment: dev
+project: nescafe
+environment: development
 config:
   root_password: root
   username: user

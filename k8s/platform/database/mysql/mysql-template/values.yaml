@@ -1,0 +1,12 @@
+project: demo
+environment: development
+config:
+  root_password: root
+  username: user
+  password: user
+mysql:
+  version: 5.7
+
+networking:
+  nodePort: 32600
+  type: NodePort

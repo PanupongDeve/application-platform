@@ -1,16 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: grafana-serivce
+  name: mysql-nescafe-development
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
-    namespace: grafana-dev
+    namespace: nescafe-development
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: k8s/platform/monitoring/grafana/grafana-application/
+    path: k8s/platform/database/mysql/mysql-nescafe-development/
     repoURL: https://github.com/PanupongDeve/application-platform
     targetRevision: HEAD
