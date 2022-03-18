@@ -12,6 +12,6 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: k8s/development/platform/database/mysql/mysql-helm-output/
+    path: k8s/platform/database/mysql/mysql-development/
     repoURL: https://github.com/PanupongDeve/application-platform
     targetRevision: HEAD

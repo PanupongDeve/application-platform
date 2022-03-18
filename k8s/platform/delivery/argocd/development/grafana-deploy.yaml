@@ -1,16 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: pg-admin-4
+  name: grafana-serivce
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
-    namespace: pg-admin-development
+    namespace: grafana-dev
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: ./k8s/development/platform/monitoring/pg-admin/pg-admin-application/
+    path: k8s/platform/monitoring/grafana/grafana-application/
     repoURL: https://github.com/PanupongDeve/application-platform
     targetRevision: HEAD
