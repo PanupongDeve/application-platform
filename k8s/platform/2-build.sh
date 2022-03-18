@@ -1,4 +1,10 @@
 #!/bin/bash
+
+# flags
+mysql=0
+pg4=1
+
+
 echo "Please, type project for building."
 read -p 'project: ' project
 
@@ -13,6 +19,9 @@ mkdir -p ./deploy/$project-$env
 cp -r ./deploy/script-template/*.sh ./deploy/$project-$env/ 
 
 # --------------------------- build data -------------------------------
+
+if [ "$mysql" == "1" ];then
+echo "------------------ Create Database Argocd file ----------------------------------"
 echo "cleaning files"
 
 echo "building database"
@@ -39,5 +48,37 @@ spec:
     repoURL: https://github.com/PanupongDeve/application-platform
     targetRevision: HEAD
 EOF
+echo "------------------ Create Database Argocd file Sucess ----------------------------------"
+fi
+
+if [ "$pg4" == "1" ];then
+echo "------------------ Create PG Admin 4 Argocd file ----------------------------------"
+echo "cleaning files"
+
+echo "building database"
+mkdir -p ./monitoring/pg-admin/pg-admin-$project-$env || true
+helm template mysql -f ./monitoring/pg-admin/pg-admin-template/values-$project-$env.yaml  ./monitoring/pg-admin/pg-admin-template/ > ./monitoring/pg-admin/pg-admin-$project-$env/application.yaml
+
+
+cat <<EOF > ./deploy/$project-$env/$project-database-deploy.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pg-admin-4-$project-$env
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: $project-$env
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: k8s/platform/monitoring/pg-admin/pg-admin-$project-$env
+    repoURL: https://github.com/PanupongDeve/application-platform
+    targetRevision: HEAD
+EOF
+echo "------------------ Create PG Admin 4 Argocd file Sucess ----------------------------------"
+fi
 
 echo "build finish"

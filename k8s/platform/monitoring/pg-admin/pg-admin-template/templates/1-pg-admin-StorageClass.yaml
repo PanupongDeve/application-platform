@@ -1,0 +1,8 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: pg-admin-localdisk
+  namespace: {{ .Values.project }}-{{ .Values.environment }}
+provisioner: kubernetes.io/no-provisioner
+# provisioner: microk8s.io/hostpath
+allowVolumeExpansion: true

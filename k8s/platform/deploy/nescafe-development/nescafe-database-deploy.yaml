@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: mysql-nescafe-development
+  name: pg-admin-4-nescafe-development
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -11,6 +11,6 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: k8s/platform/database/mysql/mysql-nescafe-development/
+    path: k8s/platform/monitoring/pg-admin/pg-admin-nescafe-development
     repoURL: https://github.com/PanupongDeve/application-platform
     targetRevision: HEAD

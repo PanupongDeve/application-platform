@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# flags
+mysql=0
+pg4=1
+
 echo "Please, type project for building."
 read -p 'project: ' project
 
@@ -10,9 +15,11 @@ read -p 'environment: ' env
 
 
 
-echo "------------------ Create Database Value file ----------------------------------"
 
-cat <<EOF > ./database/mysql/mysql-template/values-$project-$env.yaml
+
+if [ "$mysql" == "1" ];then
+  echo "------------------ Create Database Value file ----------------------------------"
+  cat <<EOF > ./database/mysql/mysql-template/values-$project-$env.yaml
 project: $project
 environment: $env
 config:
@@ -26,5 +33,25 @@ networking:
   nodePort: 
   type: 
 EOF
+  echo "------------------ Create Database Value file success ----------------------------------"
 
-echo "------------------ Create Database Value file success ----------------------------------"
+fi
+
+if [ "$pg4" == "1" ];then
+  echo "------------------ Create PG-Admin-4 Value file ----------------------------------"
+  cat <<EOF > ./monitoring/pg-admin/pg-admin-template/values-$project-$env.yaml
+project: $project
+environment: $env
+config:
+  email: pgadmin4@pgadmin.org
+  password: admin
+pg4:
+  version: latest
+
+networking:
+  nodePort: 32610
+  type: NodePort
+EOF
+  echo "------------------ Create PG-Admin-4  Value file success ----------------------------------"
+
+fi

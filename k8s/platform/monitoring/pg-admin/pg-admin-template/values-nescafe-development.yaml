@@ -1,0 +1,11 @@
+project: nescafe
+environment: development
+config:
+  email: pgadmin4@pgadmin.org
+  password: admin
+pg4:
+  version: latest
+
+networking:
+  nodePort: 32610
+  type: NodePort
