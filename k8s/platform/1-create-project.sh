@@ -2,7 +2,8 @@
 
 # flags
 mysql=0
-pg4=1
+pg4=0
+opensearch=1
 
 echo "Please, type project for building."
 read -p 'project: ' project
@@ -14,6 +15,7 @@ echo "<Warning> - After builded, you will create argocd manifest at ./deploy/<en
 read -p 'environment: ' env
 
 
+echo "------------------------------------ Install Argocd"
 
 
 
@@ -54,4 +56,9 @@ networking:
 EOF
   echo "------------------ Create PG-Admin-4  Value file success ----------------------------------"
 
+fi
+
+if [ "$opensearch" == "1" ];then
+echo "------------------ Adding Helm Repo OpenSearch file ----------------------------------"
+  ./logging/opensearch/setup.sh
 fi

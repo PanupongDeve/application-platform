@@ -1,4 +1,9 @@
+microk8s.kubectl apply -f argocd-namespace.yaml
 microk8s.kubectl apply -n argocd -f install.yaml 
+
+# kubectl apply -f argocd-namespace.yaml
+# kubectl apply -n argocd -f install.yaml 
+
 # microk8s.kubectl delete -n argocd -f install.yaml
 # UI export port 32090
 
