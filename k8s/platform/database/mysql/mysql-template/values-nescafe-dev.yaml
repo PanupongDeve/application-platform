@@ -1,0 +1,12 @@
+project: nescafe
+environment: dev
+config:
+  root_password: root
+  username: admin
+  password: admin
+mysql:
+  version: 5.7
+
+networking:
+  nodePort: 32500
+  type: NodePort

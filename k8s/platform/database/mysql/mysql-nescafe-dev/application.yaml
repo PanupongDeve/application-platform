@@ -1,0 +1,99 @@
+---
+# Source: mysql-chart-dev/templates/0-mysql-namesapce.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nescafe-dev
+---
+# Source: mysql-chart-dev/templates/2-mysql-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+  namespace: nescafe-dev
+  labels:
+    app: mysql
+data:
+  MYSQL_ROOT_PASSWORD: root
+  MYSQL_USER: admin
+  MYSQL_PASSWORD: admin
+---
+# Source: mysql-chart-dev/templates/1-mysql-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+  namespace: nescafe-dev
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+# Source: mysql-chart-dev/templates/4-mysql-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: nescafe-dev
+spec:
+  ports:
+    - port: 3306
+      protocol: TCP
+      targetPort: tcp-mysql
+      nodePort: 32500
+  selector:
+    app: mysql
+  sessionAffinity: None
+  type: NodePort
+---
+# Source: mysql-chart-dev/templates/3-mysql-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mysql
+  name: mysql
+  namespace: nescafe-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: bitnami/mysql:5.7
+          ports:
+          - containerPort: 3306
+            name: tcp-mysql
+            protocol: TCP
+          volumeMounts:
+            - mountPath: /bitnami/mysql/data
+              name: mysql-pv
+          env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                name: mysql-config
+                key: MYSQL_ROOT_PASSWORD
+          - name: MYSQL_USER
+            valueFrom:
+              configMapKeyRef:
+                name: mysql-config
+                key: MYSQL_USER
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                name: mysql-config
+                key: MYSQL_PASSWORD
+
+      volumes:
+        - name: mysql-pv
+          persistentVolumeClaim:
+            claimName: mysql-pvc

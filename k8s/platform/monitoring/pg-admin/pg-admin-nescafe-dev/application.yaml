@@ -1,0 +1,130 @@
+---
+# Source: pg-admin-4/templates/0-pg-admin-namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nescafe-dev
+---
+# Source: pg-admin-4/templates/4-pg-admin-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pg-admin-config
+  namespace: nescafe-dev
+  labels:
+    app: pgdata
+data:
+  PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+  PGADMIN_DEFAULT_PASSWORD: admin
+  PGADMIN_CONFIG_SERVER_MODE: 'False'
+
+
+  # PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+  # PGADMIN_DEFAULT_PASSWORD: admin
+  # PGADMIN_CONFIG_SERVER_MODE: 'False'
+---
+# Source: pg-admin-4/templates/1-pg-admin-StorageClass.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: pg-admin-localdisk
+  namespace: nescafe-dev
+provisioner: kubernetes.io/no-provisioner
+# provisioner: microk8s.io/hostpath
+allowVolumeExpansion: true
+---
+# Source: pg-admin-4/templates/2-pg-admin-pv.yaml
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pg-admin-pv
+  namespace: nescafe-dev
+spec:
+  storageClassName: localdisk
+  persistentVolumeReclaimPolicy: Recycle
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /var/pg_data/output
+---
+# Source: pg-admin-4/templates/3-pg-admin-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pg-admin-pvc
+  namespace: nescafe-dev
+spec:
+  # storageClassName: localdisk
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 300Mi
+---
+# Source: pg-admin-4/templates/6-pg-admin-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: pg-admin-svc
+  namespace: nescafe-dev
+spec:
+  type: NodePort
+  selector:
+    app: pg-admin
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: http-pg-admin
+      nodePort: 32610
+
+
+# DNS kong-pg-admin-svc.<namespace>.svc.cluster.local
+---
+# Source: pg-admin-4/templates/5-pg-admin-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pg-admin
+  namespace: nescafe-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pg-admin
+  template:
+    metadata:
+      labels:
+        app: pg-admin
+    spec:
+      containers:
+      - name: pg-admin
+        image: dpage/pgadmin4:latest
+        ports:
+        - containerPort: 80
+          name: http-pg-admin
+          protocol: TCP
+        volumeMounts:
+        - name: pg-admin-storage
+          mountPath: /var/lib/pgadmin
+        env:
+        - name: PGADMIN_DEFAULT_EMAIL
+          valueFrom:
+            configMapKeyRef:
+              name: pg-admin-config
+              key: PGADMIN_DEFAULT_EMAIL
+        - name: PGADMIN_DEFAULT_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: pg-admin-config
+              key: PGADMIN_DEFAULT_PASSWORD
+        - name: PPGADMIN_CONFIG_SERVER_MODE
+          valueFrom:
+            configMapKeyRef:
+              name: pg-admin-config
+              key: PGADMIN_CONFIG_SERVER_MODE
+      volumes:
+      - name: pg-admin-storage
+        persistentVolumeClaim:
+          claimName: pg-admin-pvc
