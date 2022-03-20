@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # flags
-mysql=1
-pg4=1
-opensearch=1
+mysql=0
+pg4=0
+opensearch=0
+hashivalt=1
 
 echo "Please, type project for building."
 read -p 'project: ' project
@@ -61,4 +62,9 @@ fi
 if [ "$opensearch" == "1" ];then
 echo "------------------ Adding Helm Repo OpenSearch file ----------------------------------"
   ./logging/opensearch/setup.sh
+fi
+
+if [ "$hashivalt" == "1" ];then
+echo "------------------ Adding Helm Repo OpenSearch file ----------------------------------"
+  ./secret-manger/vault/setup.sh
 fi

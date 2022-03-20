@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # flags
-mysql=1
-pg4=1
-opensearch=1
+mysql=0
+pg4=0
+opensearch=0
+hashivalt=1
 
 echo "Please, type project for building."
 read -p 'project: ' project
@@ -129,5 +130,67 @@ EOF
   #helm delete opensearch-dashboard --namespace $project-$env
 EOF
   chmod +x ./deploy/$project-$env/opensearch/destroy-opensearch-dashboard.sh 
+fi
+
+echo "------------------ Create Vault  ----------------------------------"
+
+if [ "$hashivalt" == "1" ];then
+  mkdir -p ./deploy/$project-$env/hashi-vault
+
+  cat <<EOF > ./deploy/$project-$env/hashi-vault/helm-valt-values.yaml
+server:
+  affinity: ""
+  ha:
+    enabled: true
+EOF
+  
+
+  cat <<EOF > ./deploy/$project-$env/hashi-vault/helm-consul-values.yaml
+global:
+  datacenter: vault-kubernetes-tutorial
+
+client:
+  enabled: true
+
+server:
+  replicas: 1
+  bootstrapExpect: 1
+  disruptionBudget:
+    maxUnavailable: 
+EOF
+  
+
+
+   cat <<EOF > ./deploy/$project-$env/hashi-vault/deploy-hashi-vault.sh
+  microk8s.helm3 install consul hashicorp/consul --values helm-consul-values.yaml --namespace $project-$env
+  microk8s.helm3 install vault hashicorp/vault --values helm-valt-values.yaml --namespace $project-$env
+
+
+  #helm install consul hashicorp/consul --values helm-consul-values.yaml --namespace $project-$env
+  #helm install vault hashicorp/vault --values helm-valt-values.yaml  --namespace $project-$env
+
+  sleep 10
+  #VAULT_UNSEAL_KEY=microk8s.kubectl exec -n nescafe-dev  vault-0  -- vault operator init -key-shares=1 -key-threshold=1 -format=json | cat - | jq -r ".unseal_keys_b64[]" 
+  
+  #microk8s.kubectl exec -n nescafe-dev vault-0 -- vault operator unseal $VAULT_UNSEAL_KEY
+  #microk8s.kubectl exec -n nescafe-dev vault-1 -- vault operator unseal $VAULT_UNSEAL_KEY
+  #microk8s.kubectl exec -n nescafe-dev vault-2 -- vault operator unseal $VAULT_UNSEAL_KEY
+
+  #kubectl exec -n nescafe-dev vault-0 -- vault operator unseal $VAULT_UNSEAL_KEY
+  #kubectl exec -n nescafe-dev vault-1 -- vault operator unseal $VAULT_UNSEAL_KEY
+  #kubectl exec -n nescafe-dev vault-2 -- vault operator unseal $VAULT_UNSEAL_KEY
+EOF
+  chmod +x ./deploy/$project-$env/hashi-vault/deploy-hashi-vault.sh
+
+
+  cat <<EOF > ./deploy/$project-$env/hashi-vault/destroy-hashi-vault.sh
+  microk8s.helm3 delete vault  --namespace $project-$env
+  microk8s.helm3 delete consul  --namespace $project-$env
+
+  #helm delete vault --namespace $project-$env
+  #helm delete consul  --namespace $project-$env
+  
+EOF
+  chmod +x ./deploy/$project-$env/hashi-vault/destroy-hashi-vault.sh
 fi
 
