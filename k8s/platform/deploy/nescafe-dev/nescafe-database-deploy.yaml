@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mysql-nescafe-dev
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: nescafe-dev
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: k8s/platform/database/mysql/mysql-nescafe-dev/
+    repoURL: https://github.com/PanupongDeve/application-platform
+    targetRevision: HEAD

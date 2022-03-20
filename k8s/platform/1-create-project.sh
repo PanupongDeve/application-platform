@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # flags
-mysql=0
-pg4=0
-opensearch=0
+mysql=1
+pg4=1
+opensearch=1
 hashivalt=1
 
 echo "Please, type project for building."
