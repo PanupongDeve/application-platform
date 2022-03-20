@@ -5,7 +5,7 @@ config:
   username: admin 
   password: admin
 mysql:
-  version: 
+  version: 5.7
 
 networking:
   nodePort: 32600
